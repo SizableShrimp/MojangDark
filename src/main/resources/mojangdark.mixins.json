@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "package": "${project.group}.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "${mod_id}.refmap.json",
+  "injectors": {
+    "defaultRequire": 1,
+    "maxShiftBy": 2
+  },
+  "mixins": [],
+  "client": [
+    "MixinAccessibilityScreen",
+    "MixinEarlyLoaderGUI",
+    "MixinGameSettings",
+    "MixinResourceLoadProgressGui"
+  ],
+  "minVersion": "0.8"
+}
