@@ -20,25 +20,18 @@
  * SOFTWARE.
  */
 
-package me.sizableshrimp.mojangdark.mixins;
+package me.sizableshrimp.mojangdark.transform;
 
-import me.sizableshrimp.mojangdark.MojangDark;
-import net.minecraft.util.ColorHelper;
-import net.minecraftforge.fml.client.EarlyLoaderGUI;
-import org.lwjgl.opengl.GL11;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import java.nio.file.Path;
 
-@Mixin(EarlyLoaderGUI.class)
-public abstract class MixinEarlyLoaderGUI {
-    @Redirect(method = "renderBackground", allow = 1, at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glColor4f(FFFF)V", ordinal = 0, remap = false), remap = false)
-    private void redirectRenderBackgroundColor(float red, float green, float blue, float alpha) {
-        int packedColor = MojangDark.BRAND_BACKGROUND_SUPPLIER.getAsInt();
-        red = ColorHelper.PackedColor.red(packedColor) / 255.0F;
-        green = ColorHelper.PackedColor.green(packedColor) / 255.0F;
-        blue = ColorHelper.PackedColor.blue(packedColor) / 255.0F;
-        alpha = ColorHelper.PackedColor.alpha(packedColor) / 255.0F;
-        GL11.glColor4f(red, green, blue, alpha);
+public class MojangDarkBootstrap {
+    private static Path gameDir;
+
+    public static Path getGameDir() {
+        return gameDir;
+    }
+
+    public static void setGameDir(Path gameDir) {
+        MojangDarkBootstrap.gameDir = gameDir;
     }
 }

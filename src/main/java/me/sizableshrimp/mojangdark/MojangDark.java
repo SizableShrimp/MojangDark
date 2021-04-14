@@ -22,7 +22,7 @@
 
 package me.sizableshrimp.mojangdark;
 
-import me.sizableshrimp.mojangdark.pureshit.DarkScreenLaunchPlugin;
+import me.sizableshrimp.mojangdark.transform.MojangDarkLaunchPlugin;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.BooleanOption;
 import net.minecraft.util.text.ITextComponent;
@@ -40,8 +40,8 @@ public class MojangDark {
     public static final Logger LOGGER = LogManager.getLogger();
 
     public static final IntSupplier BRAND_BACKGROUND_SUPPLIER = () -> GameSettingsAccessor.get(Minecraft.getInstance().options).isDarkMojangStudiosBackground()
-            ? DarkScreenLaunchPlugin.LOGO_BACKGROUND_COLOR_DARK
-            : DarkScreenLaunchPlugin.LOGO_BACKGROUND_COLOR;
+            ? MojangDarkLaunchPlugin.LOGO_BACKGROUND_COLOR_DARK
+            : MojangDarkLaunchPlugin.LOGO_BACKGROUND_COLOR;
 
     public static final ITextComponent ACCESSIBILITY_TOOLTIP_DARK_MOJANG_BACKGROUND =
             new TranslationTextComponent("options.darkMojangStudiosBackgroundColor.tooltip");

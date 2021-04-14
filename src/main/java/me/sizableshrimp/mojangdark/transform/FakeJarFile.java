@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package me.sizableshrimp.mojangdark.pureshit;
+package me.sizableshrimp.mojangdark.transform;
 
 import net.minecraftforge.fml.loading.FMLServiceProvider;
 import org.apache.commons.io.IOUtils;
@@ -76,10 +76,10 @@ public class FakeJarFile extends JarFile {
     @Override
     public synchronized InputStream getInputStream(ZipEntry ze) throws IOException {
         InputStream is = super.getInputStream(ze);
-        if (ze == null || !DarkScreenLaunchPlugin.CLASSES.containsKey(ze.getName()))
+        if (ze == null || !MojangDarkLaunchPlugin.CLASSES.containsKey(ze.getName()))
             return is;
 
-        byte[] classBytes = DarkScreenLaunchPlugin.transform(ze.getName(), IOUtils.toByteArray(is));
+        byte[] classBytes = MojangDarkLaunchPlugin.transform(ze.getName(), IOUtils.toByteArray(is));
         ze.setSize(classBytes.length);
         return new ByteArrayInputStream(classBytes);
     }

@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package me.sizableshrimp.mojangdark.pureshit;
+package me.sizableshrimp.mojangdark.transform;
 
 import sun.misc.Unsafe;
 
