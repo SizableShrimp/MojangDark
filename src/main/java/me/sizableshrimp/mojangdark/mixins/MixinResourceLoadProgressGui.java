@@ -23,7 +23,7 @@
 package me.sizableshrimp.mojangdark.mixins;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import me.sizableshrimp.mojangdark.MojangDark;
+import me.sizableshrimp.mojangdark.transform.MojangDarkLaunchPlugin;
 import net.minecraft.client.gui.LoadingGui;
 import net.minecraft.client.gui.ResourceLoadProgressGui;
 import net.minecraft.util.math.MathHelper;
@@ -60,7 +60,7 @@ public abstract class MixinResourceLoadProgressGui extends LoadingGui {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/ResourceLoadProgressGui;fill(Lcom/mojang/blaze3d/matrix/MatrixStack;IIIII)V"))
     private void redirectRender(MatrixStack matrixStack, int minX, int minY, int maxX, int maxY, int color) {
         float f = this.fadeOutStart > -1L ? (k - this.fadeOutStart) / 1000.0F : -1.0F;
-        int newColor = MojangDark.BRAND_BACKGROUND_SUPPLIER.getAsInt();
+        int newColor = MojangDarkLaunchPlugin.BRAND_BACKGROUND_SUPPLIER.getAsInt();
         if (f >= 1.0F) {
             newColor = replaceAlpha(newColor, MathHelper.ceil((1.0F - MathHelper.clamp(f - 1.0F, 0.0F, 1.0F)) * 255.0F));
         } else if (this.fadeIn) {

@@ -28,6 +28,7 @@ import cpw.mods.modlauncher.api.ITransformationService;
 import cpw.mods.modlauncher.api.ITransformer;
 import cpw.mods.modlauncher.api.IncompatibleEnvironmentException;
 import me.sizableshrimp.mojangdark.MojangDark;
+import net.minecraftforge.fml.loading.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -69,8 +70,8 @@ public class MojangDarkTransformationService implements ITransformationService {
                 return;
             zipUrl = codeSource.getLocation();
             File file = new File(zipUrl.toURI());
-            // Only do this if our code source isn't a directory, which indicates a compiled JAR
-            if (!file.isDirectory()) {
+            // Only do this if our code source isn't a directory and ends in .jar, which indicates a compiled JAR
+            if (!file.isDirectory() && StringUtils.toLowerCase(file.getName()).endsWith(".jar")) {
                 zipFile = new ZipFile(file);
                 // Add ourselves to the classpath so that we can reference the launch plugin class in non-dev environments
                 ClassLoaderUtils.appendToClassPath(ClassLoader.getSystemClassLoader(), zipUrl);

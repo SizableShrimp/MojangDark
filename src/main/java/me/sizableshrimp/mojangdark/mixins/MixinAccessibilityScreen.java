@@ -25,14 +25,24 @@ package me.sizableshrimp.mojangdark.mixins;
 import me.sizableshrimp.mojangdark.MojangDark;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.gui.AccessibilityScreen;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(AccessibilityScreen.class)
-public class MixinAccessibilityScreen {
-    private static final AbstractOption[] OPTIONS = {
-            AbstractOption.NARRATOR, AbstractOption.SHOW_SUBTITLES, AbstractOption.TEXT_BACKGROUND_OPACITY,
-            AbstractOption.TEXT_BACKGROUND, AbstractOption.CHAT_OPACITY, AbstractOption.CHAT_LINE_SPACING, AbstractOption.CHAT_DELAY, AbstractOption.AUTO_JUMP,
-            AbstractOption.TOGGLE_CROUCH, AbstractOption.TOGGLE_SPRINT, AbstractOption.SCREEN_EFFECTS_SCALE, AbstractOption.FOV_EFFECTS_SCALE,
-            MojangDark.DARK_MOJANG_STUDIOS_BACKGROUND_COLOR
-    };
+public abstract class MixinAccessibilityScreen {
+    @Mutable
+    @Final
+    @Shadow
+    private static final AbstractOption[] OPTIONS;
+
+    static {
+        OPTIONS = new AbstractOption[]{
+                AbstractOption.NARRATOR, AbstractOption.SHOW_SUBTITLES, AbstractOption.TEXT_BACKGROUND_OPACITY,
+                AbstractOption.TEXT_BACKGROUND, AbstractOption.CHAT_OPACITY, AbstractOption.CHAT_LINE_SPACING, AbstractOption.CHAT_DELAY, AbstractOption.AUTO_JUMP,
+                AbstractOption.TOGGLE_CROUCH, AbstractOption.TOGGLE_SPRINT, AbstractOption.SCREEN_EFFECTS_SCALE, AbstractOption.FOV_EFFECTS_SCALE,
+                MojangDark.DARK_MOJANG_STUDIOS_BACKGROUND_COLOR
+        };
+    }
 }

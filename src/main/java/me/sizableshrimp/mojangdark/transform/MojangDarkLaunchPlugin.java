@@ -33,7 +33,7 @@ public class MojangDarkLaunchPlugin {
 
     public static final int LOGO_BACKGROUND_COLOR = packColor(255, 239, 50, 61);
     public static final int LOGO_BACKGROUND_COLOR_DARK = packColor(255, 0, 0, 0);
-    private static final IntSupplier BRAND_BACKGROUND_SUPPLIER = () -> isDark() ? LOGO_BACKGROUND_COLOR_DARK : LOGO_BACKGROUND_COLOR;
+    public static final IntSupplier BRAND_BACKGROUND_SUPPLIER = () -> isDark() ? LOGO_BACKGROUND_COLOR_DARK : LOGO_BACKGROUND_COLOR;
     private static final Map<String, float[]> LIGHT_TO_DARK = ImmutableMap.of(
             "MC", new float[]{1.0F, 1.0F, 1.0F}, // MC loader
             "ML", new float[]{0.0F, 0.5F, 1.0F}, // Mod Loader
@@ -43,13 +43,13 @@ public class MojangDarkLaunchPlugin {
 
     private static final Pattern DARK_PATTERN = Pattern.compile("darkMojangStudiosBackground:(true|false)");
     private static boolean initialized = false;
-    private static boolean isDark;
+    public static boolean isDark;
 
     private static final Logger LOGGER = LogManager.getLogger();
     public static final Map<String, NodeConsumer> CLASSES = ImmutableMap.<String, NodeConsumer>builder()
             .put("net/minecraftforge/fml/loading/progress/ClientVisualization.class", classNode -> {
                 MethodNode methodNode = findMethodNode(classNode, "renderBackground", "()V");
-                MethodInsnNode instruction = findInstructionNode(methodNode, Opcodes.INVOKESTATIC, MethodInsnNode.class, insn ->
+                MethodInsnNode instruction = findInstructionNode(methodNode, Opcodes.INVOKESTATIC, insn ->
                         "org/lwjgl/opengl/GL11".equals(insn.owner) && "glColor4f".equals(insn.name) && "(FFFF)V".equals(insn.desc));
                 methodNode.instructions.insertBefore(instruction, getInvokeStaticInsn("drawBackgroundColor", float.class, float.class, float.class, float.class));
                 methodNode.instructions.remove(instruction);
@@ -58,7 +58,7 @@ public class MojangDarkLaunchPlugin {
             .put("net/minecraftforge/fml/loading/progress/StartupMessageManager$MessageType.class", classNode -> {
                 MethodNode methodNode = findMethodNode(classNode, "colour", "()[F");
                 // ALOAD 0, INVOKEVIRTUAL Enum.name(), ALOAD 0, GETFIELD, INVOKESTATIC convertColor, ARETURN - done
-                FieldInsnNode instruction = findInstructionNode(methodNode, Opcodes.GETFIELD, FieldInsnNode.class, insn -> "colour".equals(insn.name));
+                FieldInsnNode instruction = findInstructionNode(methodNode, Opcodes.GETFIELD, insn -> "colour".equals(insn.name));
                 methodNode.instructions.insertBefore(instruction, new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
                         "net/minecraftforge/fml/loading/progress/StartupMessageManager$MessageType", "name", "()Ljava/lang/String;"));
                 methodNode.instructions.insertBefore(instruction, new VarInsnNode(Opcodes.ALOAD, 0));
@@ -104,9 +104,10 @@ public class MojangDarkLaunchPlugin {
         throw new Exception(String.format("No method node found with name %s and descriptor %s", methodName, descriptor));
     }
 
-    private static <T extends AbstractInsnNode> T findInstructionNode(MethodNode methodNode, int opcode, Class<T> nodeClass, Predicate<T> applier) throws Exception {
+    private static <T extends AbstractInsnNode> T findInstructionNode(MethodNode methodNode, int opcode, Predicate<T> applier) throws Exception {
         for (AbstractInsnNode instruction : methodNode.instructions) {
             if (instruction.getOpcode() == opcode) {
+                @SuppressWarnings("unchecked")
                 T castedInsn = (T) instruction;
                 boolean success = applier.test(castedInsn);
                 if (success)
@@ -140,6 +141,11 @@ public class MojangDarkLaunchPlugin {
         initialized = true;
         try {
             Path gameDir = MojangDarkBootstrap.getGameDir();
+            if (gameDir == null) {
+                LOGGER.warn("MojangDarkBootstrap did not have a set game directory. This should not be possible!");
+                isDark = true;
+                return true;
+            }
             Path optsPath = gameDir.resolve("options.txt");
             if (!Files.exists(gameDir) || !Files.exists(optsPath)) {
                 isDark = true;

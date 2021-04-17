@@ -22,7 +22,7 @@
 
 package me.sizableshrimp.mojangdark.mixins;
 
-import me.sizableshrimp.mojangdark.MojangDark;
+import me.sizableshrimp.mojangdark.transform.MojangDarkLaunchPlugin;
 import net.minecraft.util.ColorHelper;
 import net.minecraftforge.fml.client.EarlyLoaderGUI;
 import org.lwjgl.opengl.GL11;
@@ -34,7 +34,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public abstract class MixinEarlyLoaderGUI {
     @Redirect(method = "renderBackground", allow = 1, at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glColor4f(FFFF)V", ordinal = 0, remap = false), remap = false)
     private void redirectRenderBackgroundColor(float red, float green, float blue, float alpha) {
-        int packedColor = MojangDark.BRAND_BACKGROUND_SUPPLIER.getAsInt();
+        int packedColor = MojangDarkLaunchPlugin.BRAND_BACKGROUND_SUPPLIER.getAsInt();
         red = ColorHelper.PackedColor.red(packedColor) / 255.0F;
         green = ColorHelper.PackedColor.green(packedColor) / 255.0F;
         blue = ColorHelper.PackedColor.blue(packedColor) / 255.0F;

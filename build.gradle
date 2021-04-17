@@ -20,7 +20,7 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = "${mod_version}-${minecraft_version}"
+version = "${minecraft_version}-${mod_version}"
 group = "${mod_base_package}.${mod_id}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = mod_id
 def mod_class = "${project.group}.${project.name}"
@@ -75,6 +75,7 @@ minecraft {
             if (project.hasProperty('mc_accessToken')) {
                 args '--accessToken', project.getProperty('mc_accessToken')
             }
+
             args '-mixin.config=' + project.getProperty('mod_id') + '.mixins.json'
 
             mods {
@@ -98,6 +99,11 @@ minecraft {
             // You can set various levels here.
             // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             property 'forge.logging.console.level', 'debug'
+
+            // Export mixin-changed classes
+            property 'mixin.debug.export', 'true'
+
+            args '-mixin.config=' + project.getProperty('mod_id') + '.mixins.json'
 
             mods {
                 "${mod_id}" {

@@ -23,30 +23,22 @@
 package me.sizableshrimp.mojangdark;
 
 import me.sizableshrimp.mojangdark.transform.MojangDarkLaunchPlugin;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.BooleanOption;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.function.IntSupplier;
-
 @Mod(MojangDark.MODID)
-@Mod.EventBusSubscriber
 public class MojangDark {
     public static final String MODID = "mojangdark";
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public static final IntSupplier BRAND_BACKGROUND_SUPPLIER = () -> GameSettingsAccessor.get(Minecraft.getInstance().options).isDarkMojangStudiosBackground()
-            ? MojangDarkLaunchPlugin.LOGO_BACKGROUND_COLOR_DARK
-            : MojangDarkLaunchPlugin.LOGO_BACKGROUND_COLOR;
-
-    public static final ITextComponent ACCESSIBILITY_TOOLTIP_DARK_MOJANG_BACKGROUND =
-            new TranslationTextComponent("options.darkMojangStudiosBackgroundColor.tooltip");
-    public static final BooleanOption DARK_MOJANG_STUDIOS_BACKGROUND_COLOR =
-            new BooleanOption("options.darkMojangStudiosBackgroundColor", ACCESSIBILITY_TOOLTIP_DARK_MOJANG_BACKGROUND,
-                    settings -> GameSettingsAccessor.get(settings).isDarkMojangStudiosBackground(),
-                    (settings, optionValues) -> GameSettingsAccessor.get(settings).setDarkMojangStudiosBackground(optionValues));
+    public static final BooleanOption DARK_MOJANG_STUDIOS_BACKGROUND_COLOR = new BooleanOption("options.darkMojangStudiosBackgroundColor",
+            new TranslationTextComponent("options.darkMojangStudiosBackgroundColor.tooltip"),
+            settings -> GameSettingsAccessor.get(settings).isDarkMojangStudiosBackground(),
+            (settings, optionValues) -> {
+                MojangDarkLaunchPlugin.isDark = optionValues;
+                GameSettingsAccessor.get(settings).setDarkMojangStudiosBackground(optionValues);
+            });
 }
