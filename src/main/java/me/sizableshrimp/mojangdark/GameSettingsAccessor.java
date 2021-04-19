@@ -22,9 +22,20 @@
 
 package me.sizableshrimp.mojangdark;
 
+import me.sizableshrimp.mojangdark.transform.MojangDarkBootstrap;
 import net.minecraft.client.GameSettings;
+import net.minecraft.client.settings.BooleanOption;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public interface GameSettingsAccessor {
+    BooleanOption DARK_MOJANG_STUDIOS_BACKGROUND_COLOR = new BooleanOption("options.darkMojangStudiosBackgroundColor",
+            new TranslationTextComponent("options.darkMojangStudiosBackgroundColor.tooltip"),
+            settings -> get(settings).isDarkMojangStudiosBackground(),
+            (settings, optionValues) -> {
+                MojangDarkBootstrap.setDark(optionValues);
+                get(settings).setDarkMojangStudiosBackground(optionValues);
+            });
+
     boolean isDarkMojangStudiosBackground();
 
     void setDarkMojangStudiosBackground(boolean darkMojangStudiosBackground);

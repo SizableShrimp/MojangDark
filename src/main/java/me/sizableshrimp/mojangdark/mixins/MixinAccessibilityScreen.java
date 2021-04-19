@@ -22,7 +22,7 @@
 
 package me.sizableshrimp.mojangdark.mixins;
 
-import me.sizableshrimp.mojangdark.MojangDark;
+import me.sizableshrimp.mojangdark.GameSettingsAccessor;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.gui.AccessibilityScreen;
 import org.spongepowered.asm.mixin.Final;
@@ -42,7 +42,7 @@ public abstract class MixinAccessibilityScreen {
                 AbstractOption.NARRATOR, AbstractOption.SHOW_SUBTITLES, AbstractOption.TEXT_BACKGROUND_OPACITY,
                 AbstractOption.TEXT_BACKGROUND, AbstractOption.CHAT_OPACITY, AbstractOption.CHAT_LINE_SPACING, AbstractOption.CHAT_DELAY, AbstractOption.AUTO_JUMP,
                 AbstractOption.TOGGLE_CROUCH, AbstractOption.TOGGLE_SPRINT, AbstractOption.SCREEN_EFFECTS_SCALE, AbstractOption.FOV_EFFECTS_SCALE,
-                MojangDark.DARK_MOJANG_STUDIOS_BACKGROUND_COLOR
+                GameSettingsAccessor.DARK_MOJANG_STUDIOS_BACKGROUND_COLOR
         };
     }
 }

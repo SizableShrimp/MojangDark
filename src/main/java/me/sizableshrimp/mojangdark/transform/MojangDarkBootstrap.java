@@ -22,10 +22,21 @@
 
 package me.sizableshrimp.mojangdark.transform;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MojangDarkBootstrap {
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Pattern DARK_PATTERN = Pattern.compile("darkMojangStudiosBackground:(true|false)");
     private static Path gameDir;
+    private static boolean initialized = false;
+    private static boolean isDark;
 
     public static Path getGameDir() {
         return gameDir;
@@ -33,5 +44,40 @@ public class MojangDarkBootstrap {
 
     public static void setGameDir(Path gameDir) {
         MojangDarkBootstrap.gameDir = gameDir;
+    }
+
+    public static boolean isDark() {
+        if (initialized)
+            return isDark;
+        // Our mixin to load darkMojangStudiosBackground field in GameSettings doesn't yet exist; so we have to parse options.txt manually.
+        // If we can't find the option, default to true since that's what this entire mod does.
+        initialized = true;
+        try {
+            if (gameDir == null) {
+                LOGGER.warn("No game directory was set. This should not be possible!");
+                isDark = true;
+                return true;
+            }
+            Path optsPath = gameDir.resolve("options.txt");
+            if (!Files.exists(gameDir) || !Files.exists(optsPath)) {
+                isDark = true;
+                return true;
+            }
+            String joined = String.join("\n", Files.readAllLines(optsPath));
+            Matcher matcher = DARK_PATTERN.matcher(joined);
+            if (!matcher.find()) {
+                isDark = true;
+                return true;
+            }
+            isDark = "true".equals(matcher.group(1));
+        } catch (IOException e) {
+            LOGGER.error("Error when loading options", e);
+            isDark = true;
+        }
+        return isDark;
+    }
+
+    public static void setDark(boolean isDark) {
+        MojangDarkBootstrap.isDark = isDark;
     }
 }

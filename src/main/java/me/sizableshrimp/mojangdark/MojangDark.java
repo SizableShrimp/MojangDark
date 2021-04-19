@@ -22,23 +22,9 @@
 
 package me.sizableshrimp.mojangdark;
 
-import me.sizableshrimp.mojangdark.transform.MojangDarkLaunchPlugin;
-import net.minecraft.client.settings.BooleanOption;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.common.Mod;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 @Mod(MojangDark.MODID)
 public class MojangDark {
     public static final String MODID = "mojangdark";
-    public static final Logger LOGGER = LogManager.getLogger();
-
-    public static final BooleanOption DARK_MOJANG_STUDIOS_BACKGROUND_COLOR = new BooleanOption("options.darkMojangStudiosBackgroundColor",
-            new TranslationTextComponent("options.darkMojangStudiosBackgroundColor.tooltip"),
-            settings -> GameSettingsAccessor.get(settings).isDarkMojangStudiosBackground(),
-            (settings, optionValues) -> {
-                MojangDarkLaunchPlugin.isDark = optionValues;
-                GameSettingsAccessor.get(settings).setDarkMojangStudiosBackground(optionValues);
-            });
 }

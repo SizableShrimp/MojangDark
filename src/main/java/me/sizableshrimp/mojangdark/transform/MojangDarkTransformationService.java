@@ -64,7 +64,6 @@ public class MojangDarkTransformationService implements ITransformationService {
     public void onLoad(IEnvironment env, Set<String> otherServices) throws IncompatibleEnvironmentException {
         LOGGER.info("Loading MojangDark transformation service");
         try {
-            FakeJarFile.replaceLoaders();
             CodeSource codeSource = MojangDarkTransformationService.class.getProtectionDomain().getCodeSource();
             if (codeSource == null)
                 return;
@@ -78,6 +77,8 @@ public class MojangDarkTransformationService implements ITransformationService {
             }
             // We can only set the gameDir in our bootstrap class AFTER adding ourselves to the classpath in non-dev environments. The order doesn't matter in dev.
             setGameDir(env.getProperty(IEnvironment.Keys.GAMEDIR.get()).orElseGet(() -> Paths.get(".")));
+            // Replace loaders last because of game dir + classloading
+            FakeJarFile.replaceLoaders();
         } catch (Throwable e) {
             LOGGER.error("Error loading transformation service", e);
             throw new RuntimeException(e);

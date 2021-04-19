@@ -23,7 +23,6 @@
 package me.sizableshrimp.mojangdark.mixins;
 
 import me.sizableshrimp.mojangdark.GameSettingsAccessor;
-import me.sizableshrimp.mojangdark.MojangDark;
 import net.minecraft.client.GameSettings;
 import net.minecraft.nbt.CompoundNBT;
 import org.objectweb.asm.Opcodes;
@@ -46,7 +45,7 @@ public abstract class MixinGameSettings implements GameSettingsAccessor {
             at = @At(value = "FIELD", target = "Lnet/minecraft/client/GameSettings;toggleSprint:Z", opcode = Opcodes.PUTFIELD, shift = At.Shift.BY, by = 2, ordinal = 0))
     private void injectDarkOptionLoad(CallbackInfo ci, CompoundNBT compoundnbt, CompoundNBT compoundnbt1, Iterator var3, String s, String s1) {
         if ("darkMojangStudiosBackground".equals(s)) {
-            MojangDark.DARK_MOJANG_STUDIOS_BACKGROUND_COLOR.set((GameSettings) (Object) this, s1);
+            GameSettingsAccessor.DARK_MOJANG_STUDIOS_BACKGROUND_COLOR.set((GameSettings) (Object) this, s1);
         }
     }
 
@@ -54,7 +53,7 @@ public abstract class MixinGameSettings implements GameSettingsAccessor {
             slice = @Slice(from = @At(value = "CONSTANT", args = "stringValue=toggleSprint:")),
             at = @At(value = "INVOKE", target = "Ljava/io/PrintWriter;println(Ljava/lang/String;)V", shift = At.Shift.AFTER, ordinal = 0))
     private void injectDarkOptionSave(CallbackInfo ci, PrintWriter printwriter) {
-        printwriter.println("darkMojangStudiosBackground:" + MojangDark.DARK_MOJANG_STUDIOS_BACKGROUND_COLOR.get((GameSettings) (Object) this));
+        printwriter.println("darkMojangStudiosBackground:" + GameSettingsAccessor.DARK_MOJANG_STUDIOS_BACKGROUND_COLOR.get((GameSettings) (Object) this));
     }
 
     @Override

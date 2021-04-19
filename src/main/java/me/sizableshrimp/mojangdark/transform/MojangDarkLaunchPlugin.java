@@ -15,16 +15,11 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.IntSupplier;
 import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class MojangDarkLaunchPlugin {
     private interface NodeConsumer {
@@ -33,17 +28,13 @@ public class MojangDarkLaunchPlugin {
 
     public static final int LOGO_BACKGROUND_COLOR = packColor(255, 239, 50, 61);
     public static final int LOGO_BACKGROUND_COLOR_DARK = packColor(255, 0, 0, 0);
-    public static final IntSupplier BRAND_BACKGROUND_SUPPLIER = () -> isDark() ? LOGO_BACKGROUND_COLOR_DARK : LOGO_BACKGROUND_COLOR;
+    public static final IntSupplier BRAND_BACKGROUND_SUPPLIER = () -> MojangDarkBootstrap.isDark() ? LOGO_BACKGROUND_COLOR_DARK : LOGO_BACKGROUND_COLOR;
     private static final Map<String, float[]> LIGHT_TO_DARK = ImmutableMap.of(
             "MC", new float[]{1.0F, 1.0F, 1.0F}, // MC loader
             "ML", new float[]{0.0F, 0.5F, 1.0F}, // Mod Loader
             "LOC", new float[]{0.0F, 0.5F, 0.0F}, // LOCator
             "MOD", new float[]{1.0F, 0.0F, 0.0F} // MOD - Forge's version color for some reason?
     );
-
-    private static final Pattern DARK_PATTERN = Pattern.compile("darkMojangStudiosBackground:(true|false)");
-    private static boolean initialized = false;
-    public static boolean isDark;
 
     private static final Logger LOGGER = LogManager.getLogger();
     public static final Map<String, NodeConsumer> CLASSES = ImmutableMap.<String, NodeConsumer>builder()
@@ -119,7 +110,7 @@ public class MojangDarkLaunchPlugin {
 
     // Public for coremod
     public static float[] convertColor(String name, float[] color) {
-        return isDark() ? LIGHT_TO_DARK.get(name) : color;
+        return MojangDarkBootstrap.isDark() ? LIGHT_TO_DARK.get(name) : color;
     }
 
     // Have to accept these floats so that the FLOADs don't need to be removed
@@ -131,38 +122,6 @@ public class MojangDarkLaunchPlugin {
         blue = blue(packedColor) / 255.0F;
         alpha = alpha(packedColor) / 255.0F;
         GL11.glColor4f(red, green, blue, alpha);
-    }
-
-    private static boolean isDark() {
-        if (initialized)
-            return isDark;
-        // Our mixin to load darkMojangStudiosBackground field in GameSettings doesn't yet exist; so we have to parse it manually.
-        // If we can't find it, default to true since that's what this entire mod does.
-        initialized = true;
-        try {
-            Path gameDir = MojangDarkBootstrap.getGameDir();
-            if (gameDir == null) {
-                LOGGER.warn("MojangDarkBootstrap did not have a set game directory. This should not be possible!");
-                isDark = true;
-                return true;
-            }
-            Path optsPath = gameDir.resolve("options.txt");
-            if (!Files.exists(gameDir) || !Files.exists(optsPath)) {
-                isDark = true;
-                return true;
-            }
-            String joined = String.join("\n", Files.readAllLines(optsPath));
-            Matcher matcher = DARK_PATTERN.matcher(joined);
-            if (!matcher.find()) {
-                isDark = true;
-                return true;
-            }
-            isDark = matcher.group(1).equals("true");
-        } catch (IOException e) {
-            LOGGER.error("Error when loading options", e);
-            isDark = true;
-        }
-        return isDark;
     }
 
     private static int packColor(int alpha, int red, int green, int blue) {
