@@ -39,6 +39,16 @@ public class MojangDarkBootstrap {
     private static boolean isDark;
 
     public static Path getGameDir() {
+        if (gameDir == null) {
+            try {
+                Class<?> self = Class.forName("me.sizableshrimp.mojangdark.transform.MojangDarkBootstrap", true, ClassLoader.getSystemClassLoader());
+                gameDir = (Path) self.getMethod("getGameDir").invoke(null);
+            } catch (Exception e) {
+                LOGGER.error("Error loading self!", e);
+                gameDir = null;
+            }
+        }
+
         return gameDir;
     }
 
@@ -53,13 +63,13 @@ public class MojangDarkBootstrap {
         // If we can't find the option, default to true since that's what this entire mod does.
         initialized = true;
         try {
-            if (gameDir == null) {
+            if (getGameDir() == null) {
                 LOGGER.warn("No game directory was set. This should not be possible!");
                 isDark = true;
                 return true;
             }
-            Path optsPath = gameDir.resolve("options.txt");
-            if (!Files.exists(gameDir) || !Files.exists(optsPath)) {
+            Path optsPath = getGameDir().resolve("options.txt");
+            if (!Files.exists(getGameDir()) || !Files.exists(optsPath)) {
                 isDark = true;
                 return true;
             }

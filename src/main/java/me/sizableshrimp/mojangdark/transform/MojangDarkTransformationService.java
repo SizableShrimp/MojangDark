@@ -34,9 +34,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.List;
@@ -76,7 +74,7 @@ public class MojangDarkTransformationService implements ITransformationService {
                 ClassLoaderUtils.appendToClassPath(ClassLoader.getSystemClassLoader(), zipUrl);
             }
             // We can only set the gameDir in our bootstrap class AFTER adding ourselves to the classpath in non-dev environments. The order doesn't matter in dev.
-            setGameDir(env.getProperty(IEnvironment.Keys.GAMEDIR.get()).orElseGet(() -> Paths.get(".")));
+            MojangDarkBootstrap.setGameDir(env.getProperty(IEnvironment.Keys.GAMEDIR.get()).orElseGet(() -> Paths.get(".")));
             // Replace loaders last because of game dir + classloading
             FakeJarFile.replaceLoaders();
         } catch (Throwable e) {
@@ -90,10 +88,5 @@ public class MojangDarkTransformationService implements ITransformationService {
     @SuppressWarnings("rawtypes")
     public List<ITransformer> transformers() {
         return ImmutableList.of();
-    }
-
-    private static void setGameDir(Path gameDir) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Class<?> bootstrap = Class.forName("me.sizableshrimp.mojangdark.transform.MojangDarkBootstrap", true, ClassLoader.getSystemClassLoader());
-        bootstrap.getDeclaredMethod("setGameDir", Path.class).invoke(null, gameDir);
     }
 }
